@@ -1,0 +1,7 @@
+<library path="lib/libwaypoint_planner">
+  <class name="waypoint_planner/WaypointPlanner" type="waypoint_planner::WaypointPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+    <description>
+      A simple planner that seeks to place a legal carrot in-front of the robot
+    </description>
+  </class>
+</library>

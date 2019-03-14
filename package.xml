@@ -1,0 +1,42 @@
+<package>
+    <name>waypoint_planner</name>
+    <version>1.1.2</version>
+    <description>
+     vaugue_palnner
+    </description>
+    <author>willis zhou</author>
+    <license>BSD</license>
+    <url>http://wiki.ros.org/waypoint_planner</url>
+    <maintainer email="williszhou@tencent.com">willis zhou</maintainer>
+
+    <buildtool_depend>catkin</buildtool_depend>
+    <build_depend>roscpp</build_depend>
+    <build_depend>costmap_2d</build_depend>
+    <build_depend>pluginlib</build_depend>
+    <build_depend>nav_core</build_depend>
+    <build_depend>dynamic_reconfigure</build_depend>
+    <build_depend>tf</build_depend>
+    <build_depend>std_msgs</build_depend>
+    <build_depend>shield_msgs</build_depend>
+    <!--<build_depend>angles</build_depend>-->
+    <build_depend>eigen</build_depend>
+    <build_depend>rospy</build_depend>
+    <run_depend>roscpp</run_depend>
+    <run_depend>costmap_2d</run_depend>
+    <run_depend>pluginlib</run_depend>
+    <run_depend>nav_core</run_depend>
+    <run_depend>dynamic_reconfigure</run_depend>
+    <run_depend>tf</run_depend>
+    <run_depend>std_msgs</run_depend>
+    <run_depend>shield_msgs</run_depend>
+    <!--<run_depend>angles</run_depend>-->
+    <run_depend>eigen</run_depend>
+    <run_depend>rospy</run_depend>
+
+    <export>
+        <nav_core plugin="${prefix}/bgp_plugin.xml" />
+    </export>
+
+</package>
+
+
