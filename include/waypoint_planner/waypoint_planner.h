@@ -11,7 +11,6 @@
 #include <tf/tf.h>
 #include <tf/transform_datatypes.h>
 /** ********************************************/ 
-#include <shield_msgs/WayPoints.h>
 #include <waypoint_planner/WaypointPlannerConfig.h>
 #include <angles/angles.h>
 #include <waypoint_planner/vastar.h>
@@ -44,7 +43,6 @@ class WaypointPlanner : public nav_core::BaseGlobalPlanner {
     void publishPlan(const vector<geometry_msgs::PoseStamped>& path);
 
     array<int,2> SearchWaypoint(int gx, int gy, vector<array<int,2> > wp);
-    void waypoints_cb(const shield_msgs::WayPoints::ConstPtr& msg);
     bool findFreeNeibour(int& cx, int& cy);
 
     dynamic_reconfigure::Server<waypoint_planner::WaypointPlannerConfig> *dsrv_;

@@ -36,7 +36,7 @@ void WaypointPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_
     planner_ = new vastar::VASTAR();
     ros::NodeHandle private_nh("~/" + name);
     ros::NodeHandle nh;
-    wp_sub = nh.subscribe("waypoints", 1,  &WaypointPlanner::waypoints_cb, this);
+    //wp_sub = nh.subscribe("waypoints", 1,  &WaypointPlanner::waypoints_cb, this);
     plan_pub_ = nh.advertise<nav_msgs::Path>("global_plan", 1);
     //ROS_INFO("Waypoint planner initialized successfully");
     dsrv_ = new dynamic_reconfigure::Server<waypoint_planner::WaypointPlannerConfig>(ros::NodeHandle("~/" + name));
@@ -57,16 +57,6 @@ void WaypointPlanner::reconfigureCB(waypoint_planner::WaypointPlannerConfig& con
   smooth_weight_ = config.smooth_weight;
   smooth_times_ = config.smooth_times;
   allow_vague_search_ = config.allow_vague_search;
-}
-
-void WaypointPlanner::waypoints_cb(const shield_msgs::WayPoints::ConstPtr& msg)
-{
-  ROS_INFO("update waypoints");
-  waypoints.clear();
-  for (int i =0; i< msg->data.size();i++){
-    array<int, 2> waypoint = {int(msg->data[i].x), int(msg->data[i].y)};
-    waypoints.push_back(waypoint);
-  }
 }
 
 bool WaypointPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,

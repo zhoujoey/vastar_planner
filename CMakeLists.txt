@@ -11,7 +11,6 @@ find_package(catkin REQUIRED
     pluginlib
     rospy
     std_msgs
-    shield_msgs
   )
 
 generate_dynamic_reconfigure_options(
@@ -35,7 +34,6 @@ catkin_package(
     nav_core
     rospy
     std_msgs
-    shield_msgs
 )
 #set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
 add_library(waypoint_planner src/waypoint_planner.cpp src/vastar.cpp)
