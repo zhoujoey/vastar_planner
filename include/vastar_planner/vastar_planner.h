@@ -11,25 +11,25 @@
 #include <tf/tf.h>
 #include <tf/transform_datatypes.h>
 /** ********************************************/ 
-#include <waypoint_planner/WaypointPlannerConfig.h>
+#include <vastar_planner/VastarPlannerConfig.h>
 #include <angles/angles.h>
-#include <waypoint_planner/vastar.h>
+#include <vastar_planner/vastar.h>
 
 using namespace std;
 using std::string;
 
-#ifndef WAYPOINT_PLANNER_H_
-#define WAYPOINT_PLANNER_H_
+#ifndef vastar_planner_H_
+#define vastar_planner_H_
 
 
-namespace waypoint_planner {
+namespace vastar_planner {
   
-class WaypointPlanner : public nav_core::BaseGlobalPlanner {
+class VastarPlanner : public nav_core::BaseGlobalPlanner {
   public:
-    WaypointPlanner (ros::NodeHandle &); //this constructor is may be not needed
-    WaypointPlanner ();
-    ~WaypointPlanner ();
-    WaypointPlanner(string name, costmap_2d::Costmap2DROS* costmap_ros);
+    VastarPlanner (ros::NodeHandle &); //this constructor is may be not needed
+    VastarPlanner ();
+    ~VastarPlanner ();
+    VastarPlanner(string name, costmap_2d::Costmap2DROS* costmap_ros);
     /** overriden classes from interface nav_core::BaseGlobalPlanner **/
     void initialize(string name, costmap_2d::Costmap2DROS* costmap_ros);
     bool makePlan(const geometry_msgs::PoseStamped& start, 
@@ -45,8 +45,8 @@ class WaypointPlanner : public nav_core::BaseGlobalPlanner {
     array<int,2> SearchWaypoint(int gx, int gy, vector<array<int,2> > wp);
     bool findFreeNeibour(int& cx, int& cy);
 
-    dynamic_reconfigure::Server<waypoint_planner::WaypointPlannerConfig> *dsrv_;
-    void reconfigureCB(waypoint_planner::WaypointPlannerConfig &config, uint32_t level);
+    dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig> *dsrv_;
+    void reconfigureCB(vastar_planner::VastarPlannerConfig &config, uint32_t level);
 
     ros::Publisher plan_pub_;
     ros::Subscriber wp_sub;

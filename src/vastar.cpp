@@ -2,7 +2,7 @@
  * copyright: Tencent Technology (Beijing) Co. ltd
  * author: williszhou@tencent.com
 *********************************************************************/
-#include <waypoint_planner/vastar.h>
+#include <vastar_planner/vastar.h>
 
 using namespace std;
 

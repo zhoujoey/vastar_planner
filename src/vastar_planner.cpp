@@ -1,34 +1,34 @@
-#include <waypoint_planner/waypoint_planner.h>
+#include <vastar_planner/vastar_planner.h>
 #include <pluginlib/class_list_macros.h>
 
-PLUGINLIB_EXPORT_CLASS(waypoint_planner::WaypointPlanner, nav_core::BaseGlobalPlanner)
+PLUGINLIB_EXPORT_CLASS(vastar_planner::VastarPlanner, nav_core::BaseGlobalPlanner)
 
 using namespace std;
 
-namespace waypoint_planner
+namespace vastar_planner
 {
 //Default Constructor
-WaypointPlanner::WaypointPlanner()
+VastarPlanner::VastarPlanner()
 {
 
 }
-WaypointPlanner::WaypointPlanner(ros::NodeHandle &nh)
+VastarPlanner::VastarPlanner(ros::NodeHandle &nh)
 {
   ROSNodeHandle = nh;
 }
 
-WaypointPlanner::WaypointPlanner(string name, costmap_2d::Costmap2DROS* costmap_ros)
+VastarPlanner::VastarPlanner(string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
   initialize(name, costmap_ros);
 }
 
-WaypointPlanner::~WaypointPlanner()
+VastarPlanner::~VastarPlanner()
 {
   delete planner_;
   if (dsrv_)
     delete dsrv_;
 }
-void WaypointPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_ros)
+void VastarPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_ros)
 {
   if (!initialized_){
     costmap_ros_ = costmap_ros;
@@ -36,12 +36,12 @@ void WaypointPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_
     planner_ = new vastar::VASTAR();
     ros::NodeHandle private_nh("~/" + name);
     ros::NodeHandle nh;
-    //wp_sub = nh.subscribe("waypoints", 1,  &WaypointPlanner::waypoints_cb, this);
+    //wp_sub = nh.subscribe("waypoints", 1,  &VastarPlanner::waypoints_cb, this);
     plan_pub_ = nh.advertise<nav_msgs::Path>("global_plan", 1);
     //ROS_INFO("Waypoint planner initialized successfully");
-    dsrv_ = new dynamic_reconfigure::Server<waypoint_planner::WaypointPlannerConfig>(ros::NodeHandle("~/" + name));
-    dynamic_reconfigure::Server<waypoint_planner::WaypointPlannerConfig>::CallbackType cb = boost::bind(
-            &WaypointPlanner::reconfigureCB, this, _1, _2);
+    dsrv_ = new dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig>(ros::NodeHandle("~/" + name));
+    dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig>::CallbackType cb = boost::bind(
+            &VastarPlanner::reconfigureCB, this, _1, _2);
     dsrv_->setCallback(cb);
     initialized_ = true;
   }
@@ -49,7 +49,7 @@ void WaypointPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_
     ROS_WARN("waypoint planner has already been initialized... doing nothing");
 }
 
-void WaypointPlanner::reconfigureCB(waypoint_planner::WaypointPlannerConfig& config, uint32_t level) {
+void VastarPlanner::reconfigureCB(vastar_planner::VastarPlannerConfig& config, uint32_t level) {
   use_waypoint_ = config.use_waypoint;
   stop_deviance_ = config.stop_deviance;
   weight_path_ = config.planner_weight_path;
@@ -59,7 +59,7 @@ void WaypointPlanner::reconfigureCB(waypoint_planner::WaypointPlannerConfig& con
   allow_vague_search_ = config.allow_vague_search;
 }
 
-bool WaypointPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
+bool VastarPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
                              vector<geometry_msgs::PoseStamped>& plan)
 {
   if (!initialized_){
@@ -155,7 +155,7 @@ bool WaypointPlanner::makePlan(const geometry_msgs::PoseStamped& start, const ge
   }
 }
 
-array<int,2> WaypointPlanner::SearchWaypoint(int gx, int gy, vector<array<int,2> > wp)
+array<int,2> VastarPlanner::SearchWaypoint(int gx, int gy, vector<array<int,2> > wp)
 {
   array<int,2> bestpoint;
   array<int,2> startpoint;
@@ -220,7 +220,7 @@ array<int,2> WaypointPlanner::SearchWaypoint(int gx, int gy, vector<array<int,2>
   return bestpoint;
 }
 
-bool WaypointPlanner::findFreeNeibour(int& cx, int& cy)
+bool VastarPlanner::findFreeNeibour(int& cx, int& cy)
 {
   int k = 1;
   while (k < 50){
@@ -242,7 +242,7 @@ bool WaypointPlanner::findFreeNeibour(int& cx, int& cy)
   return false;
 }
 
-void WaypointPlanner::publishPlan(const vector<geometry_msgs::PoseStamped>& path) 
+void VastarPlanner::publishPlan(const vector<geometry_msgs::PoseStamped>& path) 
 {
     if (!initialized_) {
         ROS_ERROR(
@@ -261,7 +261,7 @@ void WaypointPlanner::publishPlan(const vector<geometry_msgs::PoseStamped>& path
     plan_pub_.publish(gui_path);
 }
 
-geometry_msgs::Quaternion WaypointPlanner::toQuaternion(double pitch, double roll, double yaw)
+geometry_msgs::Quaternion VastarPlanner::toQuaternion(double pitch, double roll, double yaw)
 {
   // Abbreviations for the various angular functions
   double cy = cos(yaw * 0.5);
@@ -279,7 +279,7 @@ geometry_msgs::Quaternion WaypointPlanner::toQuaternion(double pitch, double rol
   return q;
 }
 
-void WaypointPlanner::toEulerAngle(const geometry_msgs::Quaternion& q, double& roll, double& pitch, double& yaw)
+void VastarPlanner::toEulerAngle(const geometry_msgs::Quaternion& q, double& roll, double& pitch, double& yaw)
 {
   // roll (x-axis rotation)
   double sinr_cosp = +2.0 * (q.w * q.x + q.y * q.z);

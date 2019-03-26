@@ -1,12 +1,12 @@
 <package>
-    <name>waypoint_planner</name>
+    <name>vastar_planner</name>
     <version>1.1.2</version>
     <description>
      vaugue_palnner
     </description>
     <author>willis zhou</author>
     <license>BSD</license>
-    <url>http://wiki.ros.org/waypoint_planner</url>
+    <url>http://wiki.ros.org/vastar_planner</url>
     <maintainer email="williszhou@tencent.com">willis zhou</maintainer>
 
     <buildtool_depend>catkin</buildtool_depend>
