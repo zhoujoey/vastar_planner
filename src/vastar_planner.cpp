@@ -36,12 +36,10 @@ void VastarPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_ro
     planner_ = new vastar::VASTAR();
     ros::NodeHandle private_nh("~/" + name);
     ros::NodeHandle nh;
-    //wp_sub = nh.subscribe("waypoints", 1,  &VastarPlanner::waypoints_cb, this);
     plan_pub_ = nh.advertise<nav_msgs::Path>("global_plan", 1);
-    //ROS_INFO("Waypoint planner initialized successfully");
     dsrv_ = new dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig>(ros::NodeHandle("~/" + name));
-    dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig>::CallbackType cb = boost::bind(
-            &VastarPlanner::reconfigureCB, this, _1, _2);
+    dynamic_reconfigure::Server<vastar_planner::VastarPlannerConfig>::CallbackType cb \
+                       = boost::bind(&VastarPlanner::reconfigureCB, this, _1, _2);
     dsrv_->setCallback(cb);
     initialized_ = true;
   }
@@ -50,7 +48,6 @@ void VastarPlanner::initialize(string name, costmap_2d::Costmap2DROS* costmap_ro
 }
 
 void VastarPlanner::reconfigureCB(vastar_planner::VastarPlannerConfig& config, uint32_t level) {
-  use_waypoint_ = config.use_waypoint;
   stop_deviance_ = config.stop_deviance;
   weight_path_ = config.planner_weight_path;
   weight_obs_ = config.planner_weight_obs;
@@ -114,13 +111,7 @@ bool VastarPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geom
       map.push_back(map_value);
     }
   }
-  //make path
-  if (use_waypoint_){
-    array<int, 2> bestwaypoint;
-    bestwaypoint = SearchWaypoint(goal_x, goal_y, waypoints);
-    goal_x = bestwaypoint[0];
-    goal_y = bestwaypoint[1];
-  }
+
   ///////////////////VASTAR planner;
   planner_->init(x_cell_, y_cell_, map, threshold_, weight_path_, weight_obs_, smooth_weight_, smooth_times_, allow_vague_search_);
   bestPath = planner_->Planner(start_x, start_y ,goal_x ,goal_y);
@@ -153,71 +144,6 @@ bool VastarPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geom
     ROS_WARN("Can not search local path");
     return false;
   }
-}
-
-array<int,2> VastarPlanner::SearchWaypoint(int gx, int gy, vector<array<int,2> > wp)
-{
-  array<int,2> bestpoint;
-  array<int,2> startpoint;
-  vector<array<int, 2> > openset;
-  bool hits[x_cell_][y_cell_];
-  if (wp.size() == 0){
-    array<int,2> goalpoint={gx, gy};
-    ROS_WARN("no waypoint, make plan of goal");
-    return goalpoint;
-  }
-  int cost=static_cast<int>(costmap_->getCost(gx, gy));
-  if (cost > threshold_/2){
-    findFreeNeibour(gx, gy);
-  }
-  //search way_point
-  startpoint = {gx, gy};
-
-  for (int i=0; i<x_cell_; i++){
-    for (int j=0; j<y_cell_; j++){
-      hits[i][j] = 0;
-    }
-  }
-  openset.push_back(startpoint);
-  hits[openset[0][0]][openset[0][1]] = 1;
-  while (openset.size()!=0 && ros::ok()){
-    array<int ,2> cp = *openset.begin();
-    openset.erase(openset.begin());
-    for (int i=-1; i<=1; i++){
-      for (int j=-1; j<=1; j++){
-        int cx = cp[0]+i;
-        int cy = cp[1]+j;
-        if ((cx >= 0) && (cx < x_cell_) &&  (cy >= 0) &&(cy < y_cell_) && (!(i == 0 && j == 0))){
-          if (!hits[cx][cy]){
-            for (int k =0; k< wp.size(); k++){
-              if (wp[k][0] == cx && wp[k][1] == cy){
-                bestpoint = {cx, cy};
-                return bestpoint;
-              }
-            }
-            array<int ,2> c_point;
-            c_point = {cx, cy};
-            int c_cost=static_cast<int>(costmap_->getCost(cx, cy));
-            if (c_cost<threshold_) {
-              openset.push_back(c_point);
-            }
-          }
-          hits[cx][cy] = 1;
-        }
-      }
-    }   
-  } 
-  //if can not search way_point , find nearest waypoint as bestwaypoint
-  ROS_WARN("can not search waypoint, find nearest waypoint");
-  float min_dist = numeric_limits<float>::max();
-  for (int l =0; l< wp.size(); l++){
-    float c_dist = sqrt(pow(wp[l][0] - gx, 2) + pow(wp[l][1] - gy, 2));
-    if (c_dist < min_dist) {
-      min_dist = c_dist;
-      bestpoint = {wp[l][0], wp[l][1]};
-    }
-  }
-  return bestpoint;
 }
 
 bool VastarPlanner::findFreeNeibour(int& cx, int& cy)
