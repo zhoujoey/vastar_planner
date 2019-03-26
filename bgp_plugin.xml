@@ -1,5 +1,5 @@
 <library path="lib/libvastar_planner">
-  <class name="vastar_planner/VastartPlanner" type="vastar_planner::VastarPlanner" base_class_type="nav_core::BaseGlobalPlanner">
+  <class name="vastar_planner/VastarPlanner" type="vastar_planner::VastarPlanner" base_class_type="nav_core::BaseGlobalPlanner">
     <description>
       A simple planner that seeks to place a legal carrot in-front of the robot
     </description>
